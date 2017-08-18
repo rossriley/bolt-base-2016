@@ -1,4 +1,5 @@
 {% extends 'partials/_master.twig' %}
+{% use 'partials/_sub_fields.twig' %}
 
 {% setcontent record = 'blocks/404-not-found' %}
 
@@ -7,17 +8,18 @@
 {% endblock title %}
 
 {% block main %}
+
     <div class="row">
         <div class="large-12 columns">
 
         {# special case: See if we actually want the Styleguide. #}
-        {% if app.request.server.get('REQUEST_URI') == '/styleguide' %}
+        {% if global.request.server.get('REQUEST_URI') == '/styleguide' %}
             {{ include('styleguide.twig') }}
         {% else %}
             <h1>{{ record.title|default('404 not found') }}</h1>
 
-            {% if fields(record) %}
-                {{ fields(record) }}
+            {% if record %}
+                {{ block('sub_fields') }}
             {% else %}
                 <p>
                     The requested page was not found.
