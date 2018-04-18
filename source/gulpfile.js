@@ -8,104 +8,80 @@ var PRODUCTION = !!(argv.production);
 // Browsers to target when prefixing CSS.
 var COMPATIBILITY = ['last 2 versions', 'ie >= 9'];
 
+// Define base paths for Sass and Javascript.
 // File paths to various assets are defined here.
 var PATHS = {
-  //assets: [
-  //  'src/assets/**/*',
-  //  '!src/assets/{img,js,scss}/**/*'
-  //],
   sass: [
-    'bower_components',
-    'bower_components/foundation-sites/scss',
-    'bower_components/motion-ui/src/'
-  ],
-  javascript: [
-    // 'bower_components/jquery/dist/jquery.js',
-    'bower_components/what-input/what-input.js',
-    'bower_components/foundation-sites/js/foundation.core.js',
-    'bower_components/foundation-sites/js/foundation.util.*.js',
-    // Paths to individual JS components defined below
-    'bower_components/foundation-sites/js/foundation.abide.js',
-    'bower_components/foundation-sites/js/foundation.accordion.js',
-    'bower_components/foundation-sites/js/foundation.accordionMenu.js',
-    'bower_components/foundation-sites/js/foundation.drilldown.js',
-    'bower_components/foundation-sites/js/foundation.dropdown.js',
-    'bower_components/foundation-sites/js/foundation.dropdownMenu.js',
-    'bower_components/foundation-sites/js/foundation.equalizer.js',
-    'bower_components/foundation-sites/js/foundation.interchange.js',
-    'bower_components/foundation-sites/js/foundation.magellan.js',
-    'bower_components/foundation-sites/js/foundation.offcanvas.js',
-    'bower_components/foundation-sites/js/foundation.orbit.js',
-    'bower_components/foundation-sites/js/foundation.responsiveMenu.js',
-    'bower_components/foundation-sites/js/foundation.responsiveToggle.js',
-    'bower_components/foundation-sites/js/foundation.reveal.js',
-    'bower_components/foundation-sites/js/foundation.slider.js',
-    'bower_components/foundation-sites/js/foundation.sticky.js',
-    'bower_components/foundation-sites/js/foundation.tabs.js',
-    'bower_components/foundation-sites/js/foundation.toggler.js',
-    'bower_components/foundation-sites/js/foundation.tooltip.js',
-    'bower_components/magnific-popup/dist/jquery.magnific-popup.js',
-    'src/assets/js/**/!(app).js',
-    'src/assets/js/app.js'
+    'node_modules',
   ]
 };
 
-// Combine JavaScript into one file
-// In production, the file is minified
-gulp.task('javascript', function() {
-  var uglify = $.if(PRODUCTION, $.uglify()
-    .on('error', function (e) {
-      console.log(e);
-    }));
-
-  return gulp.src(PATHS.javascript)
-    .pipe($.sourcemaps.init())
-    .pipe($.babel())
-    .pipe($.concat('foundation.js'))
-    .pipe(uglify)
-    .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
-    .pipe(gulp.dest('../js'));
-});
+var javascriptFiles = [
+    'javascript/app.js',
+    'node_modules/baguettebox.js/src/baguetteBox.js',
+    'node_modules/prismjs/prism.js',
+    'node_modules/prismjs/components/prism-php.js',
+    'node_modules/prismjs/components/prism-json.js',
+    'node_modules/prismjs/components/prism-yaml.js',
+    'node_modules/prismjs/components/prism-bash.js',
+    'node_modules/prismjs/components/prism-markup-templating.js',
+    'node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js',
+    'node_modules/prismjs/plugins/line-highlight/prism-line-highlight.js'
+];
 
 // Compile Foundation Sass into CSS. In production, the CSS is compressed
-gulp.task('foundation-sass', function() {
+gulp.task('bulma-sass', function() {
 
-  return gulp.src('scss/foundation.scss')
-    .pipe($.sourcemaps.init())
-    .pipe($.sass({
-      includePaths: PATHS.sass
-    })
-      .on('error', $.sass.logError))
-    .pipe($.autoprefixer({
-      browsers: COMPATIBILITY
-    }))
-    .pipe($.if(PRODUCTION, $.cssnano()))
-    .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
-    .pipe(gulp.dest('../css'));
-});
+    return gulp.src('scss/bulma.scss')
+      .pipe($.sourcemaps.init())
+      .pipe($.sass({
+        includePaths: PATHS.sass
+      })
+        .on('error', $.sass.logError))
+      .pipe($.autoprefixer({
+        browsers: COMPATIBILITY
+      }))
+      .pipe($.if(PRODUCTION, $.cssnano()))
+      .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
+      .pipe(gulp.dest('../css'));
+  });
 
 // Compile Theme Sass into CSS. Not compressed.
 gulp.task('theme-sass', function() {
 
-  return gulp.src('scss/theme.scss')
-    .pipe($.sourcemaps.init())
-    .pipe($.sass({
-      includePaths: PATHS.sass
-    })
-      .on('error', $.sass.logError))
-    .pipe($.autoprefixer({
-      browsers: COMPATIBILITY
-    }))
-    // If you _do_ want to compress this file on 'production', uncomment the the lines below.
-    // .pipe($.if(PRODUCTION, $.cssnano()))
-    // .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
-    .pipe(gulp.dest('../css'));
+    return gulp.src('scss/theme.scss')
+      .pipe($.sourcemaps.init())
+      .pipe($.sass({
+        includePaths: PATHS.sass
+      })
+        .on('error', $.sass.logError))
+      .pipe($.autoprefixer({
+        browsers: COMPATIBILITY
+      }))
+      // If you _do_ want to compress this file on 'production', uncomment the the lines below.
+      .pipe($.if(PRODUCTION, $.cssnano()))
+      .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
+      .pipe(gulp.dest('../css'));
+  });
+
+// Set up 'compress' task.
+gulp.task('compress', function() {
+  return gulp.src(javascriptFiles)
+    .pipe($.if(PRODUCTION, $.uglify()))
+    .pipe($.concat('app.js'))
+    .pipe(gulp.dest('../js'));
 });
 
-// Build the "dist" folder by running all of the above tasks
-gulp.task('build', ['javascript', 'foundation-sass', 'theme-sass']);
-
-
-gulp.task('default', ['javascript', 'foundation-sass', 'theme-sass'], function() {
-  gulp.watch(['scss/**/*.scss'], ['foundation-sass', 'theme-sass']);
+gulp.task('setproduction', function() {
+  PRODUCTION = true;
 });
+
+// Set up 'default' task, with watches.
+gulp.task('default', ['compress', 'bulma-sass', 'theme-sass'], function() {
+  gulp.watch(['scss/**/*.scss'], ['theme-sass', 'bulma-sass']);
+  gulp.watch(['javascript/**/*.js'], ['compress']);
+});
+
+// Build
+gulp.task('build', ['setproduction', 'compress', 'bulma-sass', 'theme-sass']);
+

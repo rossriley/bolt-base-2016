@@ -1,22 +1,26 @@
-<!-- Footer -->
-<footer class="row">
-    <hr />
-    <div class="large-6 columns">
-        <p>{{ __("This website is <a href='%url%' target='_blank' title='Sophisticated, lightweight & simple CMS'>Built with Bolt</a>.",{'%url%':'http://bolt.cm'}) }}
-        </p>
+{# Footer #}
+<footer role="contentinfo" class="footer">
+    <div class="container">
+        <nav class="level" role="navigation" aria-label="footer navigation">
+            <div class="level-left">
+                <div class="level-item">
+                    <p>
+                        &copy; {{ "now"|date("Y") }} &bullet;
+                        {{ __("This website is <a href='%url%' target='_blank' title='Sophisticated, lightweight & simple CMS'>Built with Bolt</a>.", {'%bolt%':'https://bolt.cm'}) }}
+                    </p>
+                </div>
+            </div>
+            <div class="level-right">
+                {{ menu(
+                    identifier = 'main',
+                    template = 'partials/_sub_menu_footer.twig',
+                    params = {'withsubmenus': false}
+                ) }}
+            </div>
+        </nav>
+        {{ widgets('footer') }}
     </div>
-    <div class="large-6 columns">
-        {{ menu(
-            identifier = 'main',
-            template = 'partials/_sub_menu.twig',
-            params = {'withsubmenus': false, 'class': 'inline-list align-right'}
-        ) }}
-    </div>
-
-    {{ widgets('footer') }}
-
 </footer>
 
-<script src="{{ asset('js/jquery.min.js', 'theme') }}"></script>
-<script src="{{ asset('js/foundation.js', 'theme') }}"></script>
+<script src="{{ asset('js/normalizeBrightness.js', 'theme') }}"></script>
 <script src="{{ asset('js/app.js', 'theme') }}"></script>

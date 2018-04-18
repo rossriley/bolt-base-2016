@@ -1,7 +1,5 @@
-{% set main_width = theme.layout.main_width|default(8) %}
-{% set aside_width = theme.layout.aside_width|default(4) %}
 <!doctype html>
-<html class="no-js" lang="{{ htmllang() }}">
+<html lang="{{ htmllang() }}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -13,55 +11,33 @@
                 {{ config.get('general/sitename') -}}
             {% if record.title is not defined and config.get('general/payoff') %} | {{ config.get('general/payoff') }}{% endif -%}
         </title>
-        <link rel="stylesheet" href="{{ asset('css/foundation.css', 'theme') }}">
+        <link href="https://fonts.googleapis.com/css?family=Bitter|Roboto:400,400i,700" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('css/bulma.css', 'theme') }}">
         <link rel="stylesheet" href="{{ asset('css/theme.css', 'theme') }}">
-        <link href='https://fonts.googleapis.com/css?family=Noto+Sans:700,700italic' rel='stylesheet' type='text/css'>
-        {% block headincludes %}
-        {% endblock headincludes %}
     </head>
-    <body>
+    <body{% if app.request.get('_route') == "homepage" %} class="front"{% endif %}>
+        <a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
 
         {% block body %}
 
-            {% if theme.layout.variant != 'wide' %}
-                <div class="row">
-            {% endif %}
-
-            {{ include('partials/_topbar.twig') }}
+            <header role="banner" class="header">
+            {{ include('partials/_navbar.twig') }}
             {{ include('partials/_header.twig') }}
+            </header>
 
-            {% if theme.layout.variant != 'wide' %}
-                </div>
-            {% endif %}
+            {{ widgets('main_top') }}
 
-            <div class="row">
+            <a id="main-content"></a>
+            {% block main %}
+            {% endblock main %}
 
-                {% if theme.layout.aside == "left" %}
-                    {{ include('partials/_aside.twig') }}
-                {% endif %}
-
-                <div class="{% if theme.layout.aside not in ['left', 'right'] %}large-centered{% endif %} large-{{ main_width }} columns">
-
-                    {{ widgets('main_top') }}
-
-                    {% block main %}
-                    {% endblock main %}
-
-                    {{ widgets('main_bottom') }}
-
-                </div>
-
-                {% if theme.layout.aside == "right" %}
-                    {{ include('partials/_aside.twig') }}
-                {% endif %}
-
-            </div>
+            {{ widgets('main_bottom') }}
 
         {% endblock body %}
 
         {{ include('partials/_footer.twig') }}
 
-        {% block bottomincludes %}
-        {% endblock bottomincludes %}
     </body>
 </html>
+
+

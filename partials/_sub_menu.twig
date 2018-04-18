@@ -14,25 +14,26 @@
 {% macro display_menu_item(item, loop, extraclass, withsubmenus) %}
     {% from _self import display_menu_item %}
     {% spaceless %}
-    <li class="index-{{ loop.index -}}
-        {{ item.path|default('') == 'homepage' ? ' menu-text' -}}
-        {{ loop.first ? ' first' -}}
-        {{ loop.last ? ' last' -}}
-        {{ (item.submenu|default(false) and withsubmenus) ? ' is-dropdown-submenu-parent' -}}
-        {{ item|current ? ' active' }}">
+    {% if item.submenu|default is empty %}
+    <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='navbar-item {{ item|current ? 'is-active' }} {{ item.class|default('') }}'>
+        {{- item.label|default('-') -}}
+    </a>
+    {% endif %}
 
-        <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='{{ item.class|default('') }}'>
+    {% if item.submenu is defined and withsubmenus %}
+    <div class="navbar-item
+        {{ (item.submenu|default(false) and withsubmenus) ? ' has-dropdown is-hoverable' -}}">
+
+        <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='navbar-link {{ item|current ? 'is-active' }}{{ item.class|default('') }}'>
             {{- item.label|default('-') -}}
         </a>
-
-        {% if item.submenu is defined and withsubmenus %}
-            <ul class="menu submenu vertical" data-submenu>
-                {% for submenu in item.submenu %}
-                    {{ display_menu_item(submenu, loop) }}
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
+        <div class="navbar-dropdown">
+            {% for submenu in item.submenu|default %}
+                {{ display_menu_item(submenu, loop) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     {% endspaceless %}
 {% endmacro %}
 
@@ -40,11 +41,8 @@
 {% from _self import display_menu_item %}
 
 {# The main menu loop: Iterates over the items, calling `display_menu_item` #}
-<ul  class="menu vertical medium-horizontal {{ class|default('') }}" data-responsive-menu="accordion medium-dropdown">
 {% for item in menu %}
     {% if item.label is defined %}
         {{ display_menu_item(item, loop, '', withsubmenus) }}
     {% endif %}
 {% endfor %}
-</ul>
-

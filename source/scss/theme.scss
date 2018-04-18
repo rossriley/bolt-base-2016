@@ -1,103 +1,206 @@
-@charset 'utf-8';
+// Theme specific styling.
 
-// The settings file contains the Foundation base settings, like fonts,
-// colors, margins and other components.
-// @see: http://foundation.zurb.com/sites/docs/sass.html#the-settings-file
 @import 'settings';
+@import 'typography';
+@import 'breakpointdebug';
+@import 'node_modules/baguettebox.js/src/baguetteBox';
+@import 'node_modules/prismjs/themes/prism';
 
-// The Headerphoto, with the background image.
-.headerphoto {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    height: 500px;
-    min-height: 20vh;
-    max-height: 36vh;
+.visually-hidden:not(:focus):not(:active) {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+}
+.skip-link {
+    font-family: $font-serif;
+    font-size: $size-large;
+    font-weight: bold;
+    position: absolute;
+    top: 60px;
+    z-index: 1;
 }
 
-.column, .columns{
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-}
-
-.headertitle {
-    text-align: center;
-}
-
-[type='search'] {
-    box-shadow: none;
-}
-
-ul.pagination {
-
-    background: #DDD;
-    display: inline-block;
-
-    a {
-        padding: 0.6em 1em;
-        text-decoration: none;
+.navbar-brand {
+    .navbar-item {
+        font-family: $font-serif;
+        font-size: $size-large;
+        font-weight: bold;
     }
-
-    .active a {
-        color: $light-gray;
-        background: $black;
-    }
-
 }
 
-h1 a, h2 a, h3 a {
+.navbar-end {
+    align-items: center;
+    @include mobile {
+        form {
+            padding: 1rem;
+            .control:first-child {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.notification {
+    ul {
+        margin: 0.5em 1.4em;
+        list-style-type: disc;
+    }
+}
+
+.teaser {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .button:last-child {
+        margin-top: auto;
+    }
+}
+
+.section-latest-entries {
+    .buttons {
+        margin-top: 1.5rem;
+    }
+}
+
+.tags {
+    margin-top: 3rem;
+    .label {
+        margin-right: .5em;
+    }
+}
+
+.section-record {
+    .image {
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+    }
+}
+
+.button {
     text-decoration: none;
 }
 
 p.meta {
+    margin-top: 1rem;
+    color: $medium;
     font-size: 90%;
-    color: #666;
 }
 
-@include breakpoint(medium) {
-    h1, h2{
-        margin-bottom: 2rem;
+.media {
+    @include mobile {
+        flex-direction: column;
     }
+}
+.media-right {
+    flex-shrink: 1;
+    margin-left: 0;
+    @include mobile {
+        order: -1;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
 
+.imageholder {
     img {
-        margin: 0 auto 1rem;
-        max-width: 80%;
-        display: block;
+        width: 100%;
     }
 }
 
-.no-js {
-  @include breakpoint(small only) {
-    .top-bar {
-      display: none;
-    }
-  }
-
-  @include breakpoint(medium) {
-    .title-bar {
-      display: none;
-    }
-  }
+.notification > .delete {
+    right: .5rem;
+    top: .5rem;
 }
 
-// Override the a inside .menu-text, for topbar navigation, where the 'homepage' has a link.
-.menu > li {
-    padding: 0;
-    a {
-        color: $primary-color;
-        text-decoration: none;
-    }
-    &.active > a {
-        color: $primary-color;
-        background-color: inherit;
-        border-bottom: 1px solid;
-    }
+
+.hero-image {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    margin-top: 52px;
 }
 
-// Style widgets using the classes for .widgetholder and .widget
-.widgetholder {
+.hero.is-large .hero-body {
+    padding-bottom: 4rem;
+    padding-top: 4rem;
+    h1.title,
+    h2.subtitle {
+        text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.4);
+    }
+    h1.title  {
+        font-size: $title-size;
+        font-weight: bold;
+    }
+    h2.subtitle  {
+        font-size: $subtitle-size;
+    }
+    @include tablet {
+        padding-bottom: 12rem;
+        padding-top: 12rem;
+        h1.title  {
+            font-size: $title-size * 1.25;
+        }
+        h2.subtitle  {
+            font-size: $subtitle-size * 1.25;
+        }
+    }
+    @include desktop {
+        padding-bottom: 16rem;
+        padding-top: 16rem;
+        h1.title  {
+            font-size: $title-size * 1.5;
+        }
+        h2.subtitle  {
+            font-size: $subtitle-size * 1.5;
+        }
+    }
 
-    .widget {
-        margin: 1.5em 0;
+}
+
+.footer {
+  padding: 2rem 1.5rem
+}
+
+// https://antoningrele.github.io/img-brightness-normalization/normalizeBrightness.css
+[data-background-image] { position: relative; }
+
+[data-background-image] .dark-overlay {
+	/*	This is the element that is going to darken the background image
+	By default, it's entirely black, but the JS code will give it
+	some transparency by setting its opacity to a calculated value.
+	The brighter the image, the higher the opacity, to compensate ! */
+
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+	background-color: black;
+}
+
+pre {
+    // Fix tags in prism.
+    .tag {
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+        display: inherit;
+        font-size: inherit
+    }
+    .number {
+        font-size: 1em;
     }
 }
